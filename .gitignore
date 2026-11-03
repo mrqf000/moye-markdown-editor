@@ -1,0 +1,13 @@
+node_modules/
+outputs/
+work/webview2-sdk/
+work/webview2.zip
+work/moye-install-payload.zip
+work/desktop-profile/
+work/native-tests/*.exe
+work/native-tests/*.dll
+*.log
+*.pdb
+.DS_Store
+Thumbs.db
+

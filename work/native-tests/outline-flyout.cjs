@@ -1,0 +1,48 @@
+const assert = require('node:assert/strict');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
+const { chromium } = require('playwright');
+(async () => {
+  const browser = await chromium.launch({ channel: 'msedge', headless: true });
+  try {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.goto(pathToFileURL(path.resolve(__dirname, '../../outputs/墨页-Markdown编辑器.html')).href);
+    assert.equal(await page.locator('#outlineToggle').getAttribute('aria-expanded'), 'true');
+    await page.locator('#outlineClose').click();
+    await page.waitForTimeout(250);
+    assert.ok((await page.locator('#outlinePanel').boundingBox()).width < 1, 'Collapsed outline reserves no empty strip');
+    const before = await page.locator('main').boundingBox();
+    await page.locator('#outlineToggle').click();
+    await page.waitForTimeout(250);
+    assert.equal(await page.locator('#outlinePanel').isVisible(), true);
+    const after = await page.locator('main').boundingBox();
+    assert.ok(Math.abs(after.x - before.x - 218) < 1, 'Outline expands inline to the left of the editor');
+    assert.ok(Math.abs(before.width - after.width - 218) < 1, 'Editor fits beside the expanded outline');
+    const panel = await page.locator('#outlinePanel').boundingBox();
+    assert.ok(panel.x + panel.width <= after.x + 1, 'Outline does not overlap the editor');
+    const heading = await page.locator('#outlinePanelTitle').boundingBox();
+    const close = await page.locator('#outlineClose').boundingBox();
+    assert.ok(Math.abs(heading.y + heading.height / 2 - close.y - close.height / 2) <= 1, 'Header and close button are centered on the same row');
+    await page.screenshot({ path: path.resolve(__dirname, '../../outputs/文档大纲抽拉.png') });
+    await page.locator('#outlineClose').click();
+    assert.equal(await page.locator('#outlineToggle').getAttribute('aria-expanded'), 'false');
+    await page.locator('#outlineToggle').click();
+    await page.locator('#outline button').last().click();
+    assert.equal(await page.locator('#outlineToggle').getAttribute('aria-expanded'), 'true', 'Navigation keeps the sidebar open');
+    await page.locator('#editor').click();
+    assert.equal(await page.locator('#outlineToggle').getAttribute('aria-expanded'), 'true', 'Editing keeps the sidebar open');
+    await page.locator('#outlineClose').focus();
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#outlineToggle').getAttribute('aria-expanded'), 'false');
+    await page.setViewportSize({ width: 600, height: 800 });
+    await page.locator('#outlineToggle').click();
+    await page.waitForTimeout(250);
+    assert.equal(await page.locator('#outlinePanel').isVisible(), true);
+    const smallPanel = await page.locator('#outlinePanel').boundingBox();
+    assert.ok(smallPanel.x >= 0 && smallPanel.x + smallPanel.width <= 600);
+    assert.deepEqual(errors, []);
+    console.log('Passed: inline sidebar expands/collapses, no empty strip, aligned header, no overlap, navigation and editing keep it open, Escape, small viewport; no runtime errors.');
+  } finally { await browser.close(); }
+})().catch(error => { console.error(error); process.exitCode = 1; });

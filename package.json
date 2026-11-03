@@ -1,0 +1,26 @@
+{
+  "name": "moye-markdown-editor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "墨页：简洁、现代的 Windows Markdown 可视化编辑器",
+  "license": "MIT",
+  "scripts": {
+    "build": "node work/build.cjs",
+    "setup:webview2": "powershell -NoProfile -ExecutionPolicy Bypass -File work/setup-webview2.ps1",
+    "build:desktop": "powershell -NoProfile -ExecutionPolicy Bypass -File work/build-desktop.ps1",
+    "build:installer": "powershell -NoProfile -ExecutionPolicy Bypass -File work/build-installer.ps1",
+    "test": "npm run test:editor",
+    "test:editor": "node work/native-tests/list-conversion.cjs && node work/native-tests/list-layout.cjs && node work/native-tests/table-selection.cjs && node work/native-tests/image-paste.cjs && node work/native-tests/outline-flyout.cjs",
+    "test:installer": "powershell -NoProfile -ExecutionPolicy Bypass -File work/native-tests/installer.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File work/native-tests/shell-new.ps1"
+  },
+  "dependencies": {
+    "lucide": "1.8.0"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
+

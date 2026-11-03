@@ -1,0 +1,28 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run setup:webview2
+      - run: npm run build:installer
+      - run: npm test
+      - run: npm run test:installer
+      - uses: actions/upload-artifact@v4
+        with:
+          name: moye-windows
+          path: |
+            outputs/墨页安装包.exe
+            outputs/墨页-Markdown编辑器.html
+
