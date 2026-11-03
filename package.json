@@ -9,6 +9,7 @@
     "setup:webview2": "powershell -NoProfile -ExecutionPolicy Bypass -File work/setup-webview2.ps1",
     "build:desktop": "powershell -NoProfile -ExecutionPolicy Bypass -File work/build-desktop.ps1",
     "build:installer": "powershell -NoProfile -ExecutionPolicy Bypass -File work/build-installer.ps1",
+    "screenshot": "node work/native-tests/screenshot-demo.cjs",
     "test": "npm run test:editor",
     "test:editor": "node work/native-tests/list-conversion.cjs && node work/native-tests/list-layout.cjs && node work/native-tests/table-selection.cjs && node work/native-tests/image-paste.cjs && node work/native-tests/outline-flyout.cjs",
     "test:installer": "powershell -NoProfile -ExecutionPolicy Bypass -File work/native-tests/installer.ps1 && powershell -NoProfile -ExecutionPolicy Bypass -File work/native-tests/shell-new.ps1"
