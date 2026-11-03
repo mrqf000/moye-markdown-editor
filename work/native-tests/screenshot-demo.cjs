@@ -8,7 +8,7 @@ const { chromium } = require('playwright');
   const markdown = fs.readFileSync(path.join(root, 'examples/墨页功能展示.md'), 'utf8');
   const browser = await chromium.launch({ channel: 'msedge', headless: true });
   try {
-    const page = await browser.newPage({ viewport: { width: 1600, height: 1000 }, deviceScaleFactor: 1 });
+    const page = await browser.newPage({ viewport: { width: 1600, height: 2700 }, deviceScaleFactor: 1 });
     await page.goto(pathToFileURL(path.join(root, 'outputs/墨页-Markdown编辑器.html')).href);
     await page.evaluate(({ markdown }) => {
       filename = '墨页功能展示.md';
